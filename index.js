@@ -32,7 +32,7 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
 
     // First, analyze the image using GPT-4V
     const analysis = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
+      model: "gpt-4-vision-preview-0",
       messages: [
         {
           role: "user",
@@ -56,18 +56,15 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     const imageDescription = analysis.choices[0].message.content;
 
     // Generate comic with DALL-E 3 using the analysis
-    const prompt = `Create a 4-panel manga/comic strip layout (2x2 grid). Story concept: ${imageDescription}
-                    Technical requirements:
-                    - Must be exactly 4 panels in a 2x2 grid layout
-                    - Each panel must be clearly separated with borders
-                    - Include panel numbers 1-4 in corners
-                    - Add English text/dialogue in each panel
-                    - Maintain consistent art style across all panels
-                    - Panels should flow: 1(top-left) → 2(top-right) → 3(bottom-left) → 4(bottom-right)
-                    Art style:
-                    - Cute and comical manga/cartoon style
-                    - Character design should be kawaii/adorable
-                    - Clean, clear visuals with good contrast`;
+    const prompt = `Create a 4-panel manga/comic strip layout (2x2 grid) based on this story: ${imageDescription}
+                    Requirements:
+                    - Layout: Exactly 4 panels in 2x2 grid with clear borders
+                    - Flow: 1(top-left) → 2(top-right) → 3(bottom-left) → 4(bottom-right)
+                    - Style: Kawaii/cute manga style, similar to the reference
+                    - Text: English dialogue in speech bubbles
+                    - Story: Must be comical and entertaining
+                    - Character: Must maintain consistent cute character design across all panels
+                    Make sure it's family-friendly and charming, with clear panel transitions.`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
