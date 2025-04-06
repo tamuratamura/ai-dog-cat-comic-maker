@@ -11,6 +11,7 @@ const port = 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 // Configure multer for image upload
 const storage = multer.memoryStorage();
