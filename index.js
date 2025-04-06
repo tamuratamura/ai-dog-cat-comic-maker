@@ -30,10 +30,41 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     // Convert buffer to base64
     const base64Image = req.file.buffer.toString('base64');
 
-    // Generate comic with DALL-E
+    // First, analyze the image using Vision API
+    const analysis = await openai.chat.completions.create({
+      model: "gpt-4-vision-preview",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "Please describe the main characteristics and features of this image in detail. Focus on the subject's appearance, expressions, and actions."
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/${req.file.mimetype};base64,${base64Image}`
+              }
+            }
+          ]
+        }
+      ],
+      max_tokens: 300
+    });
+
+    const imageDescription = analysis.choices[0].message.content;
+
+    // Generate comic with DALL-E using the analysis
+    const prompt = `Create a 4-panel comic strip (2x2 grid) based on this description: ${imageDescription}. 
+                    Make it comical and cute. Each panel should flow naturally to tell a funny story. 
+                    Add English text captions that tell a humorous story. 
+                    The character should maintain the key features from the original image.
+                    Important: Must be exactly 4 panels in a 2x2 grid layout.`;
+
     const response = await openai.images.generate({
       model: "dall-e-3",
-      prompt: "Create a 4-panel comic strip that's comical and cute based on this image. Add English text captions that tell a funny story.",
+      prompt: prompt,
       n: 1,
       size: "1024x1024",
       quality: "standard",
@@ -47,19 +78,6 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     console.error('Error generating comic:', error);
     res.status(500).json({ error: 'Failed to generate comic' });
   }
-});
-
-// Usage tracking endpoint
-app.post('/api/track-usage', async (req, res) => {
-  const { userId, subscriptionType } = req.body;
-  
-  // Here you would implement usage tracking logic
-  // For now, just return mock response
-  res.json({
-    dailyUsage: 1,
-    remainingToday: subscriptionType === 'free' ? 1 : 
-                    subscriptionType === 'standard' ? 9 : 49
-  });
 });
 
 app.listen(port, '0.0.0.0', () => {
