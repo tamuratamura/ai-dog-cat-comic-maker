@@ -30,33 +30,8 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     // Convert buffer to base64
     const base64Image = req.file.buffer.toString('base64');
 
-    // First, analyze the image using GPT-4V
-    const analysis = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview-0",
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: "この画像で4コマ漫画を描いてください。内容はコミカルな感じで キャラクターはかわいい感じでお願いします。 画像内の文字は英語で表記お願いします。"
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/${req.file.mimetype};base64,${base64Image}`
-              }
-            }
-          ]
-        }
-      ],
-      max_tokens: 500
-    });
-
-    const imageDescription = analysis.choices[0].message.content;
-
-    // Generate comic with DALL-E 3 using the analysis
-    const prompt = `Create a 4-panel manga/comic strip layout (2x2 grid) based on this story: ${imageDescription}
+    // Generate comic directly with DALL-E 3
+    const prompt = `Create a 4-panel manga/comic strip (2x2 grid) featuring a cute dog character in a comical situation.
                     Requirements:
                     - Layout: Exactly 4 panels in 2x2 grid with clear borders
                     - Flow: 1(top-left) → 2(top-right) → 3(bottom-left) → 4(bottom-right)
