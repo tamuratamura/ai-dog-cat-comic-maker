@@ -27,35 +27,8 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'No image uploaded' });
     }
 
-    // Convert buffer to base64
-    // First, analyze the image using Vision API
-    const base64Image = req.file.buffer.toString('base64');
-    const visionPrompt = "Describe this dog's key visual features in 3-4 words";
-    
-    const visionResponse = await openai.chat.completions.create({
-      model: "gpt-4-vision",
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: visionPrompt },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:${req.file.mimetype};base64,${base64Image}`
-              }
-            }
-          ]
-        }
-      ],
-      max_tokens: 50
-    });
-
-    const dogFeatures = visionResponse.choices[0].message.content;
-
-    // Then generate comic with the features description
-    const prompt = `Create a 4-panel manga (2x2 grid) with a ${dogFeatures} dog. 
-                    Show funny situation in 4 connected scenes. Include speech bubbles.`;
+    const prompt = `Create a 4-panel manga (2x2 grid). Make it cute and funny with speech bubbles. 
+                    Show a dog in 4 connected scenes that tell a simple story.`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
