@@ -29,24 +29,32 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
 
     // Convert buffer to base64
     const base64Image = req.file.buffer.toString('base64');
+    const imageUrl = `data:${req.file.mimetype};base64,${base64Image}`;
 
     // Generate comic directly with DALL-E 3
-    const prompt = `Create a 4-panel manga/comic strip (2x2 grid) featuring a cute dog character in a comical situation.
-                    Requirements:
-                    - Layout: Exactly 4 panels in 2x2 grid with clear borders
-                    - Flow: 1(top-left) → 2(top-right) → 3(bottom-left) → 4(bottom-right)
-                    - Style: Kawaii/cute manga style, similar to the reference
-                    - Text: English dialogue in speech bubbles
-                    - Story: Must be comical and entertaining
-                    - Character: Must maintain consistent cute character design across all panels
-                    Make sure it's family-friendly and charming, with clear panel transitions.`;
+    const prompt = `Create a 4-panel manga/comic strip (yonkoma manga) in a 2x2 grid layout, using this specific dog image as reference: ${imageUrl}
+
+                    Critical requirements:
+                    - Layout: Must be exactly 4 panels in a 2x2 grid with clear black borders
+                    - Character: The main character must closely match the physical features of the dog in the reference image
+                    - Panels: Each panel should show a clear progression of a simple, humorous story
+                    - Style: Cute manga style with clean lines and simple backgrounds
+                    - Text: Short English dialogue in speech bubbles
+                    - Flow: Read from top-left → top-right → bottom-left → bottom-right
+                    
+                    Additional specifications:
+                    - Keep the dog's distinctive features consistent across all panels
+                    - Use simple backgrounds that don't distract from the main character
+                    - Make the story light-hearted and family-friendly
+                    - Include clear panel borders and maintain consistent art style`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
       prompt: prompt,
       n: 1,
       size: "1024x1024",
-      quality: "standard",
+      quality: "hd",
+      style: "natural",
     });
 
     res.json({
