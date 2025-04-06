@@ -32,21 +32,15 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     const imageUrl = `data:${req.file.mimetype};base64,${base64Image}`;
 
     // Generate comic directly with DALL-E 3
-    const prompt = `Create a 4-panel manga/comic strip (yonkoma manga) in a 2x2 grid layout, using this specific dog image as reference: ${imageUrl}
-
-                    Critical requirements:
-                    - Layout: Must be exactly 4 panels in a 2x2 grid with clear black borders
-                    - Character: The main character must closely match the physical features of the dog in the reference image
-                    - Panels: Each panel should show a clear progression of a simple, humorous story
-                    - Style: Cute manga style with clean lines and simple backgrounds
-                    - Text: Short English dialogue in speech bubbles
-                    - Flow: Read from top-left → top-right → bottom-left → bottom-right
-                    
-                    Additional specifications:
-                    - Keep the dog's distinctive features consistent across all panels
-                    - Use simple backgrounds that don't distract from the main character
-                    - Make the story light-hearted and family-friendly
-                    - Include clear panel borders and maintain consistent art style`;
+    const prompt = `Create a 4-panel manga (2x2 grid) using this reference dog: ${imageUrl}
+                    Make a cute, funny story featuring the dog as the main character.
+                    Requirements:
+                    - 4 panels with black borders, arranged 2x2
+                    - Dog must match reference image's features exactly
+                    - Read order: top-left to right, then bottom-left to right
+                    - Simple backgrounds, clean manga style
+                    - English dialogue in speech bubbles
+                    - Keep story light and family-friendly`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
