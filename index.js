@@ -32,15 +32,10 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     const imageUrl = `data:${req.file.mimetype};base64,${base64Image}`;
 
     // Generate comic directly with DALL-E 3
-    const prompt = `Create a 4-panel manga (2x2 grid) using this reference dog: ${imageUrl}
-                    Make a cute, funny story featuring the dog as the main character.
-                    Requirements:
-                    - 4 panels with black borders, arranged 2x2
-                    - Dog must match reference image's features exactly
-                    - Read order: top-left to right, then bottom-left to right
-                    - Simple backgrounds, clean manga style
-                    - English dialogue in speech bubbles
-                    - Keep story light and family-friendly`;
+    const prompt = `Create a 4-panel manga (2x2 grid) based on this dog: ${imageUrl}
+                    4 panels with borders (2x2), match dog's features exactly.
+                    Read: top-left to right, then bottom-left to right.
+                    Include speech bubbles, keep it cute and funny.`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
