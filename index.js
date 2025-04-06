@@ -76,7 +76,11 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     });
   } catch (error) {
     console.error('Error generating comic:', error);
-    res.status(500).json({ error: 'Failed to generate comic' });
+    const errorMessage = error.response?.data?.error?.message || error.message || 'Failed to generate comic';
+    res.status(500).json({ 
+      error: errorMessage,
+      details: error.response?.data || error.message
+    });
   }
 });
 

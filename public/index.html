@@ -60,11 +60,12 @@
                 if (data.success) {
                     resultDiv.innerHTML = `<img src="${data.imageUrl}" alt="Generated Comic">`;
                 } else {
-                    resultDiv.innerHTML = 'Failed to generate comic';
+                    resultDiv.innerHTML = `Error: ${data.error}`;
+                    console.error('API Error details:', data.details);
                 }
             } catch (error) {
-                resultDiv.innerHTML = 'Error generating comic';
-                console.error(error);
+                resultDiv.innerHTML = 'Error: Failed to connect to server';
+                console.error('Client Error:', error);
             }
         }
     </script>
