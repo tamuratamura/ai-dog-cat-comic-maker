@@ -33,7 +33,7 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     const visionPrompt = "Describe this dog's key visual features in 3-4 words";
     
     const visionResponse = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
+      model: "gpt-4-vision",
       messages: [
         {
           role: "user",
