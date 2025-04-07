@@ -32,7 +32,7 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
 
     // First, analyze the image to extract character traits
     const visionResponse = await openai.chat.completions.create({
-      model: "gpt-4-1106-vision-preview",
+      model: "gpt-4-vision-preview",
       messages: [
         {
           role: "system",
