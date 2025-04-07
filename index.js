@@ -32,7 +32,7 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
 
     // First, analyze the image to extract character traits
     const visionResponse = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
+      model: "gpt-4-vision-preview",
       messages: [
         {
           role: "system",
@@ -77,16 +77,14 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     const story = storyResponse.choices[0].message.content;
 
     // Then use the story to generate the comic with DALL-E
-    const prompt = `Create a gentle 4-panel storybook comic (2x2 grid layout) featuring a small fluffy dog with these traits: ${characterTraits}
-                    Scenes:
+    const prompt = `Create a heartwarming 4-panel storybook comic (2x2 grid) about a fluffy dog: ${characterTraits}
+                    Story:
                     ${story}
-                    Style: Soft watercolor picture book style with gentle brush strokes and pastel colors.
-                    Use warm, cozy backgrounds like living rooms or sunny gardens.
-                    Include hand-written style English text inside each panel, placed naturally within the scene.
-                    Layout: 2x2 grid, read from top-left to right, then bottom-left to right.
-                    Make the scenes feel calm and heartwarming with soft lighting.
-                    Ensure the dog's expressions are gentle and endearing across all panels.
-                    Add subtle atmospheric elements like gentle sunlight or soft shadows to enhance the cozy mood.`;
+                    Art style: Children's storybook illustration with soft pastel colors and gentle lines.
+                    Layout: Simple 2x2 grid with rounded panel corners.
+                    Text: Hand-written style English captions inside each panel.
+                    Mood: Calm and cozy with simple home/garden backgrounds.
+                    Keep the style very gentle and sweet, like a bedtime storybook.`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
