@@ -77,15 +77,16 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     const story = storyResponse.choices[0].message.content;
 
     // Then use the story to generate the comic with DALL-E
-    const prompt = `Create a cute and comical 4-panel manga (2x2 grid layout) featuring characters with these traits: ${characterTraits}
+    const prompt = `Create a gentle 4-panel storybook comic (2x2 grid layout) featuring a small fluffy dog with these traits: ${characterTraits}
                     Scenes:
                     ${story}
-                    Style: Adorable kawaii manga style with soft pastel colors and rounded corners.
-                    Add cute visual effects like sparkles, hearts, or small flowers where appropriate.
-                    Include speech bubbles with text in a playful font.
+                    Style: Soft watercolor picture book style with gentle brush strokes and pastel colors.
+                    Use warm, cozy backgrounds like living rooms or sunny gardens.
+                    Include hand-written style English text inside each panel, placed naturally within the scene.
                     Layout: 2x2 grid, read from top-left to right, then bottom-left to right.
-                    Make the characters extra cute with expressive eyes and gentle features.
-                    Ensure consistent character features across all panels with emphasis on their charm.`;
+                    Make the scenes feel calm and heartwarming with soft lighting.
+                    Ensure the dog's expressions are gentle and endearing across all panels.
+                    Add subtle atmospheric elements like gentle sunlight or soft shadows to enhance the cozy mood.`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
