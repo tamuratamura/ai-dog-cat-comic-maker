@@ -79,6 +79,30 @@
             color: #666;
             font-size: 0.9em;
         }
+        .loading-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 5px solid #FFD6E0;
+            border-top: 5px solid #FF88AA;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        .loading-text {
+            font-size: 1rem;
+            color: #888;
+            font-style: italic;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -86,7 +110,13 @@
     <div class="upload-form">
         <h2>📸 Upload your lovely pet photo</h2>
         <input type="file" id="imageInput" accept="image/*">
-        <button onclick="generateComic()">✨ Generate Comic</button>
+        <button id="generateBtn" onclick="generateComic()">✨ Generate Comic</button>
+        
+        <!-- Loading Spinner -->
+        <div id="loading" class="loading-box" style="display: none;">
+            <div class="spinner"></div>
+            <p class="loading-text">✨ Generating your lovely comic…</p>
+        </div>
     </div>
     <div class="result" id="result"></div>
     <div class="footer">
@@ -97,6 +127,7 @@
         async function generateComic() {
             const imageInput = document.getElementById('imageInput');
             const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
             
             if (!imageInput.files[0]) {
                 alert('Please select an image first');
@@ -107,7 +138,8 @@
             formData.append('image', imageInput.files[0]);
 
             try {
-                resultDiv.innerHTML = '✨ Generating your lovely comic...';
+                loadingDiv.style.display = 'flex';
+                resultDiv.innerHTML = '';
                 const response = await fetch('/api/generate-comic', {
                     method: 'POST',
                     body: formData
@@ -123,6 +155,8 @@
             } catch (error) {
                 resultDiv.innerHTML = 'Error: Failed to connect to server';
                 console.error('Client Error:', error);
+            } finally {
+                loadingDiv.style.display = 'none';
             }
         }
     </script>
