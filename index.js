@@ -77,13 +77,15 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     const story = storyResponse.choices[0].message.content;
 
     // Then use the story to generate the comic with DALL-E
-    const prompt = `Create a 4-panel manga (2x2 grid layout) featuring a character with these traits: ${characterTraits}
+    const prompt = `Create a cute and comical 4-panel manga (2x2 grid layout) featuring characters with these traits: ${characterTraits}
                     Scenes:
                     ${story}
-                    Style: Cute manga style with clean black borders between panels.
-                    Include speech bubbles with the text.
+                    Style: Adorable kawaii manga style with soft pastel colors and rounded corners.
+                    Add cute visual effects like sparkles, hearts, or small flowers where appropriate.
+                    Include speech bubbles with text in a playful font.
                     Layout: 2x2 grid, read from top-left to right, then bottom-left to right.
-                    Make sure the character's distinctive features are consistent across all panels.`;
+                    Make the characters extra cute with expressive eyes and gentle features.
+                    Ensure consistent character features across all panels with emphasis on their charm.`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
