@@ -77,23 +77,36 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     const story = storyResponse.choices[0].message.content;
 
     // Then use the story to generate the comic with DALL-E
-    const prompt = `Create a cute and comical 4-panel manga (2x2 grid layout) featuring the character from the image: ${characterTraits}
+    const prompt = `Create a warm and cozy 4-panel comic strip (2x2 grid) featuring a cute dog from the image: ${characterTraits}
                     Story:
-                    ${story}
-                    Style: Kawaii manga style with:
-                    - Adorable character designs with big expressive eyes
-                    - Soft pastel colors and rounded edges
-                    - Cute visual effects like sparkles or small hearts where appropriate
-                    - Simple, clean backgrounds that don't distract from the characters
-                    Layout: 2x2 grid manga format with clear panel borders
-                    Text: English text in a playful, hand-written style font
-                    Make sure the characters are extra cute with chibi-like proportions and cheerful expressions`;
+                    Panel 1: The dog is lazily lying on a couch, thinking: "Ah… the perfect spot."
+                    Panel 2: It hears a rustling sound, perks up slightly: "Wait… is that food?"
+                    Panel 3: The dog jumps dramatically into the air, excited: "Snack emergency mode: ON!"
+                    Panel 4: The dog reaches the kitchen with proud eyes, standing in front of a treat: "Mission: Snack Accomplished!"
+                    
+                    Art Style Requirements:
+                    - Warm, soft children's book style with kawaii manga influence
+                    - Gentle brush strokes and pastel color palette
+                    - Cozy backgrounds (living room, kitchen) with soft lighting
+                    - Character must be consistently drawn across all panels
+                    
+                    Layout Specifications:
+                    - Wide 2x2 grid format (1792x1024) with clear panel borders
+                    - All panels fully visible with NO cropping
+                    - Adequate spacing between panels
+                    - Clean, readable comic-style handwritten text inside each panel
+                    
+                    Additional Details:
+                    - Express the dog's emotions clearly through facial expressions
+                    - Keep backgrounds simple but identifiable
+                    - Ensure text is properly centered and easy to read
+                    - Add subtle visual effects (sparkles, motion lines) where appropriate`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
       prompt: prompt,
       n: 1,
-      size: "1024x1024",
+      size: "1792x1024",
       quality: "hd",
       style: "natural",
     });
