@@ -1,0 +1,88 @@
+素晴らしい目標です！  
+Replit上で「どんな動物や人物の画像からでも、特徴を自動で抽出してキャラクター化し、4コマ漫画を生成する仕組み」を作るには、以下のステップと**API連携の指示内容**を押さえるのがポイントです👇
+
+---
+
+## ✅ 目標の自動化フロー（Replitで構築する処理）
+
+```plaintext
+① 画像をアップロード
+　　↓
+② GPT-4 Vision で画像の特徴を抽出（→動物や人物の見た目を言語化）
+　　↓
+③ 特徴を元に DALL·E 用プロンプトを生成（＋ストーリーもChatGPTで作成）
+　　↓
+④ DALL·E APIで4コマ漫画生成
+　　↓
+⑤ ユーザーに表示
+```
+
+---
+
+## ✅ Replitで組むバックエンド構成（例：Flask）
+
+1. `/upload`：画像受け取りエンドポイント（Base64またはMultipart）
+2. `/analyze`：GPT-4 Visionで特徴抽出
+3. `/generate`：ChatGPT & DALL·Eで4コマ漫画生成
+
+---
+
+## 🧠 Replitで使うべきGPT Vision指示例（重要！）
+
+ReplitからOpenAI API（GPT-4-vision）に送るときの**プロンプト指示**をこうします：
+
+```python
+vision_prompt = """
+You are a creative assistant helping to turn real-world animals or people into comic characters.
+Analyze the uploaded image and describe the appearance of the animal or person in detail:
+- Species or type (if recognizable)
+- Size and posture
+- Fur/hair style and color
+- Eyes, ears, tail, or other notable features
+- Facial expression or vibe
+
+Then summarize it in a way that can be used to generate a cute cartoon version for a 4-panel comic strip.
+Use simple, visual-friendly language.
+"""
+```
+
+そして画像と一緒にGPT-4（visionモデル）へ送信：
+
+```python
+response = openai.ChatCompletion.create(
+  model="gpt-4-vision-preview",
+  messages=[
+    {"role": "system", "content": "You are an expert visual analyzer."},
+    {"role": "user", "content": [
+        {"type": "text", "text": vision_prompt},
+        {"type": "image_url", "image_url": {"url": "data:image/jpeg;base64,xxx..."}}
+    ]}
+  ],
+  max_tokens=1000
+)
+```
+
+🔍 こうして返ってきた特徴を DALL·E用プロンプトやストーリー生成に活用！
+
+---
+
+## 💬 Replit上で使う指示（まとめ）
+
+### ChatGPT Visionへの指示：
+> “Analyze this uploaded image and extract the character’s visual traits (fur color, size, eyes, vibe, etc) in a way that can be used for cartoon generation.”
+
+### ChatGPT for comic script：
+> “Write a cute and funny 4-panel comic strip based on this dog: [←抽出された特徴]”
+
+### DALL·Eへのプロンプト：
+> “A four-panel comic featuring a dog with [←特徴], in a cute pastel cartoon style. Include English captions inside each panel based on the story: [←ChatGPTが出力したストーリー]”
+
+---
+
+## ✅ 次の一手
+
+「この構成でReplit上にFlask APIプロジェクト作るテンプレ」  
+をまるっと用意できますが、やってみますか？  
+（画像受け取り → GPT Vision → DALL·Eまでつながる構成）
+
+「コードで組みたい部分」を教えてくれたら、そこから一緒に始めよう！
