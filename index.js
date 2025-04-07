@@ -27,7 +27,39 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'No image uploaded' });
     }
 
-    // First, generate a story using ChatGPT
+    // Convert image to base64
+    const base64Image = req.file.buffer.toString('base64');
+
+    // First, analyze the image to extract character traits
+    const visionResponse = await openai.chat.completions.create({
+      model: "gpt-4-1106-vision-preview",
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert visual analyzer."
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "Analyze this image and describe the character's visual traits (fur/hair color, size, eyes, expression, notable features) in 2-3 short sentences. Focus on the most distinctive features that would make this character unique in a comic."
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:${req.file.mimetype};base64,${base64Image}`
+              }
+            }
+          ]
+        }
+      ],
+      max_tokens: 150
+    });
+
+    const characterTraits = visionResponse.choices[0].message.content;
+
+    // Then, generate a story using the character traits
     const storyResponse = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
@@ -37,7 +69,7 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
         },
         {
           role: "user",
-          content: "Create a 4-panel comic story. Make it cute and funny. Respond in this format:\n1. [panel 1 text]\n2. [panel 2 text]\n3. [panel 3 text]\n4. [panel 4 text]"
+          content: `Create a cute and funny 4-panel comic strip featuring a character with these traits: ${characterTraits}\nRespond in this format:\n1. [panel 1 text]\n2. [panel 2 text]\n3. [panel 3 text]\n4. [panel 4 text]`
         }
       ]
     });
@@ -45,11 +77,13 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     const story = storyResponse.choices[0].message.content;
 
     // Then use the story to generate the comic with DALL-E
-    const prompt = `Create a 4-panel manga (2x2 grid layout) with these scenes:
+    const prompt = `Create a 4-panel manga (2x2 grid layout) featuring a character with these traits: ${characterTraits}
+                    Scenes:
                     ${story}
                     Style: Cute manga style with clean black borders between panels.
                     Include speech bubbles with the text.
-                    Layout: 2x2 grid, read from top-left to right, then bottom-left to right.`;
+                    Layout: 2x2 grid, read from top-left to right, then bottom-left to right.
+                    Make sure the character's distinctive features are consistent across all panels.`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
