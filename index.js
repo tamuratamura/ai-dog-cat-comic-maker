@@ -77,12 +77,13 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     const story = storyResponse.choices[0].message.content;
 
     // Then use the story to generate the comic with DALL-E
-    const prompt = `Create a warm and cozy 4-panel comic strip (2x2 grid) featuring a cute dog from the image: ${characterTraits}
+    const prompt = `Create a warm and cozy 4-panel comic strip (2x2 grid) featuring the main character from the image: ${characterTraits}
+
                     Story:
-                    Panel 1: The dog is lazily lying on a couch, thinking: "Ah… the perfect spot."
+                    Panel 1: The character is lazily lying on a couch, thinking: "Ah… the perfect spot."
                     Panel 2: It hears a rustling sound, perks up slightly: "Wait… is that food?"
-                    Panel 3: The dog jumps dramatically into the air, excited: "Snack emergency mode: ON!"
-                    Panel 4: The dog reaches the kitchen with proud eyes, standing in front of a treat: "Mission: Snack Accomplished!"
+                    Panel 3: The character jumps dramatically into the air, excited: "Snack emergency mode: ON!"
+                    Panel 4: The character reaches the kitchen with proud eyes, standing in front of a treat: "Mission: Snack Accomplished!"
                     
                     Art Style Requirements:
                     - Warm, soft children's book style with kawaii manga influence
@@ -97,7 +98,7 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
                     - Clean, readable comic-style handwritten text inside each panel
                     
                     Additional Details:
-                    - Express the dog's emotions clearly through facial expressions
+                    - Express the character's emotions clearly through facial expressions
                     - Keep backgrounds simple but identifiable
                     - Ensure text is properly centered and easy to read
                     - Add subtle visual effects (sparkles, motion lines) where appropriate`;
