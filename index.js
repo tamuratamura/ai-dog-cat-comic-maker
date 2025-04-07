@@ -27,8 +27,29 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'No image uploaded' });
     }
 
-    const prompt = `Create a 4-panel manga (2x2 grid). Make it cute and funny with speech bubbles. 
-                    Show a dog in 4 connected scenes that tell a simple story.`;
+    // First, generate a story using ChatGPT
+    const storyResponse = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content: "You are a creative comic writer."
+        },
+        {
+          role: "user",
+          content: "Create a 4-panel comic story. Make it cute and funny. Respond in this format:\n1. [panel 1 text]\n2. [panel 2 text]\n3. [panel 3 text]\n4. [panel 4 text]"
+        }
+      ]
+    });
+
+    const story = storyResponse.choices[0].message.content;
+
+    // Then use the story to generate the comic with DALL-E
+    const prompt = `Create a 4-panel manga (2x2 grid layout) with these scenes:
+                    ${story}
+                    Style: Cute manga style with clean black borders between panels.
+                    Include speech bubbles with the text.
+                    Layout: 2x2 grid, read from top-left to right, then bottom-left to right.`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
