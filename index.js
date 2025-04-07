@@ -77,14 +77,17 @@ app.post('/api/generate-comic', upload.single('image'), async (req, res) => {
     const story = storyResponse.choices[0].message.content;
 
     // Then use the story to generate the comic with DALL-E
-    const prompt = `Create a heartwarming 4-panel storybook comic (2x2 grid) about a fluffy dog: ${characterTraits}
+    const prompt = `Create a cute and comical 4-panel manga (2x2 grid layout) featuring the character from the image: ${characterTraits}
                     Story:
                     ${story}
-                    Art style: Children's storybook illustration with soft pastel colors and gentle lines.
-                    Layout: Simple 2x2 grid with rounded panel corners.
-                    Text: Hand-written style English captions inside each panel.
-                    Mood: Calm and cozy with simple home/garden backgrounds.
-                    Keep the style very gentle and sweet, like a bedtime storybook.`;
+                    Style: Kawaii manga style with:
+                    - Adorable character designs with big expressive eyes
+                    - Soft pastel colors and rounded edges
+                    - Cute visual effects like sparkles or small hearts where appropriate
+                    - Simple, clean backgrounds that don't distract from the characters
+                    Layout: 2x2 grid manga format with clear panel borders
+                    Text: English text in a playful, hand-written style font
+                    Make sure the characters are extra cute with chibi-like proportions and cheerful expressions`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
