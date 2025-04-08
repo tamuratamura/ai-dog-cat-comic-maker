@@ -1,0 +1,110 @@
+🎯 Goal:
+Implement a subscription screen in the iOS app for "AI Dog & Cat Comic Maker", using SwiftUI and StoreKit 2.
+
+This screen should:
+- Clearly display subscription options and their benefits
+- Allow users to subscribe or restore purchases
+- Match the lovely pastel, pet-friendly visual theme
+
+---
+
+✅ 1. SwiftUI Subscription Screen Layout
+
+Please create a new SwiftUI view named SubscriptionView.swift using the layout below:
+
+swift
+import SwiftUI
+import StoreKit
+
+struct SubscriptionView: View {
+    @Environment(\.dismiss) var dismiss
+    @State private var selectedPlan: Product?
+
+    var standardProduct: Product
+    var premiumProduct: Product
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("🐾 Upgrade Your Comic Experience!")
+                .font(.title)
+                .fontWeight(.bold)
+                .foregroundColor(Color.pink)
+
+            Text("Unlock more daily generations and remove ads with one of our lovely plans.")
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+                .padding()
+
+            SubscriptionCard(
+                title: "Standard Plan",
+                price: standardProduct.displayPrice,
+                description: "• 10 comics per day\n• No ads",
+                isSelected: selectedPlan?.id == standardProduct.id
+            ).onTapGesture {
+                selectedPlan = standardProduct
+            }
+
+            SubscriptionCard(
+                title: "Premium Plan",
+                price: premiumProduct.displayPrice,
+                description: "• 50 comics per day\n• No ads",
+                isSelected: selectedPlan?.id == premiumProduct.id
+            ).onTapGesture {
+                selectedPlan = premiumProduct
+            }
+
+            Button("Subscribe Now") {
+                Task {
+                    if let plan = selectedPlan {
+                        try? await plan.purchase()
+                    }
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.pink)
+            .disabled(selectedPlan == nil)
+
+            Button("Restore Purchases") {
+                try? await AppStore.sync()
+            }
+            .font(.footnote)
+            .padding(.top)
+
+            Button("Not now") {
+                dismiss()
+            }
+            .foregroundColor(.gray)
+            .padding(.top)
+        }
+        .padding()
+    }
+}
+
+struct SubscriptionCard: View {
+    let title: String
+    let price: String
+    let description: String
+    let isSelected: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(title)
+                    .font(.headline)
+                Spacer()
+                Text(price)
+                    .font(.subheadline)
+            }
+            Text(description)
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .background(isSelected ? Color.pink.opacity(0.15) : Color.white)
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(isSelected ? Color.pink : Color.gray.opacity(0.3), lineWidth: 2)
+        )
+    }
+}
