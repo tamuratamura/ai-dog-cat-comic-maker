@@ -79,6 +79,23 @@
             color: #666;
             font-size: 0.9em;
         }
+        .upgrade-link {
+            background-color: #FFE4EC;
+            color: #FF5E99;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 2px 6px rgba(255, 110, 150, 0.15);
+            margin-top: 12px;
+        }
+        .upgrade-link:hover {
+            background-color: #FFD6E8;
+            transform: scale(1.05);
+        }
         .loading-box {
             display: flex;
             flex-direction: column;
@@ -121,9 +138,7 @@
     <div class="result" id="result"></div>
     <div class="footer">
         💬 Share your comic with #LovelyPetComic! 🐾<br>
-        <a href="subscription.html" style="color: #FF6B8B; text-decoration: none; margin-top: 10px; display: inline-block;">
-            ✨ Upgrade to Premium
-        </a>
+        <a href="subscription.html" class="upgrade-link">💎 Upgrade to Premium</a>
     </div>
 
     <script>
