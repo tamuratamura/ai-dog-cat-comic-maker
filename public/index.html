@@ -128,6 +128,7 @@
         <h2>📸 Upload your lovely pet photo</h2>
         <input type="file" id="imageInput" accept="image/*">
         <button id="generateBtn" onclick="generateComic()">✨ Generate Comic</button>
+        <p id="remainingCount" style="text-align: center; color: #666; font-size: 0.9em; margin-top: 10px;"></p>
         
         <!-- Loading Spinner -->
         <div id="loading" class="loading-box" style="display: none;">
@@ -142,6 +143,23 @@
     </div>
 
     <script>
+        function getDailyKey() {
+            const today = new Date().toISOString().split('T')[0];
+            return `comics_generated_${today}`;
+        }
+
+        function getRemainingGenerations() {
+            const dailyLimit = 2;
+            const used = parseInt(localStorage.getItem(getDailyKey()) || '0');
+            return Math.max(0, dailyLimit - used);
+        }
+
+        function updateGenerationCounter() {
+            const remaining = getRemainingGenerations();
+            document.getElementById('remainingCount').textContent = 
+                `Remaining generations today: ${remaining}`;
+        }
+
         async function generateComic() {
             const imageInput = document.getElementById('imageInput');
             const resultDiv = document.getElementById('result');
@@ -151,6 +169,17 @@
                 alert('Please select an image first');
                 return;
             }
+
+            const remaining = getRemainingGenerations();
+            if (remaining <= 0) {
+                alert('You have reached your daily limit of 2 comics. Please upgrade to Premium for unlimited generations!');
+                return;
+            }
+
+            const dailyKey = getDailyKey();
+            const used = parseInt(localStorage.getItem(dailyKey) || '0');
+            localStorage.setItem(dailyKey, (used + 1).toString());
+            updateGenerationCounter();
 
             const formData = new FormData();
             formData.append('image', imageInput.files[0]);
@@ -177,6 +206,10 @@
                 loadingDiv.style.display = 'none';
             }
         }
+    </script>
+    <script>
+        // Initialize the generation counter when page loads
+        document.addEventListener('DOMContentLoaded', updateGenerationCounter);
     </script>
 </body>
 </html>
