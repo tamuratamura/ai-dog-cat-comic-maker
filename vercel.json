@@ -1,3 +1,0 @@
-{
-  "rewrites": [{ "source": "/api/(.*)", "destination": "/pages/api/$1.js" }]
-}
