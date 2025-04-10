@@ -24,7 +24,6 @@ export default async function handler(req, res) {
       req.on("error", reject);
     });
 
-    // ここで MIME タイプを file-type モジュールで検出
     const type = await fileType.fromBuffer(buffer);
     if (!type || !type.mime.startsWith("image/")) {
       return res
@@ -33,9 +32,10 @@ export default async function handler(req, res) {
     }
 
     const base64Image = buffer.toString("base64");
+    const mimeType = type.mime;
 
     const visionResponse = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
+      model: "gpt-4-turbo",
       messages: [
         {
           role: "system",
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
             {
               type: "image_url",
               image_url: {
-                url: `data:${type.mime};base64,${base64Image}`,
+                url: `data:${mimeType};base64,${base64Image}`,
               },
             },
           ],
@@ -66,7 +66,7 @@ export default async function handler(req, res) {
 
     const dalleResponse = await openai.images.generate({
       model: "dall-e-3",
-      prompt: prompt,
+      prompt,
       n: 1,
       size: "1792x1024",
       quality: "hd",
