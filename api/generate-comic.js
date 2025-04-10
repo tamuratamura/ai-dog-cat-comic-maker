@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import fileType from "file-type";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -23,11 +24,18 @@ export default async function handler(req, res) {
       req.on("error", reject);
     });
 
+    // ここで MIME タイプを file-type モジュールで検出
+    const type = await fileType.fromBuffer(buffer);
+    if (!type || !type.mime.startsWith("image/")) {
+      return res
+        .status(400)
+        .json({ error: "Invalid MIME type. Only image types are supported." });
+    }
+
     const base64Image = buffer.toString("base64");
-    const mimeType = req.headers["content-type"] || "image/jpeg";
 
     const visionResponse = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
+      model: "gpt-4-vision-preview",
       messages: [
         {
           role: "system",
@@ -43,7 +51,7 @@ export default async function handler(req, res) {
             {
               type: "image_url",
               image_url: {
-                url: `data:${mimeType};base64,${base64Image}`,
+                url: `data:${type.mime};base64,${base64Image}`,
               },
             },
           ],
