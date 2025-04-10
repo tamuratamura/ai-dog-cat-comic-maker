@@ -46,7 +46,7 @@ export default async function handler(req, res) {
           content: [
             {
               type: "text",
-              text: "Analyze this image and describe the character's visual traits (fur/hair color, size, eyes, expression, notable features) in 2-3 short sentences. Focus on the most distinctive features that would make this character unique in a comic.",
+              text: "Analyze this image and describe the character's visual traits (fur/hair color, size, eyes, expression, notable features) in 2-3 short sentences.",
             },
             {
               type: "image_url",
